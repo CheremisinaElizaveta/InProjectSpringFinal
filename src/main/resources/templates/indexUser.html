@@ -1,0 +1,93 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Все пользователи</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f9f1f2;
+            color: #333;
+        }
+
+        .container {
+            max-width: 800px;
+            margin: auto;
+            padding: 20px;
+            background-color: #fff;
+            border-radius: 8px;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+        }
+
+        h1 {
+            text-align: center;
+            color: #d5006d;
+        }
+
+        .btn {
+            display: inline-block;
+            padding: 10px 15px;
+            border: none;
+            border-radius: 5px;
+            text-decoration: none;
+            color: white;
+            cursor: pointer;
+        }
+
+        .btn-success {
+            background-color: #ff4081; /* Розовый цвет для кнопки "Новый пользователь" */
+        }
+
+        .btn-primary {
+            background-color: #d5006d; /* Темно-розовый цвет для кнопки "Подробнее..." */
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 20px;
+        }
+
+        th, td {
+            padding: 12px;
+            text-align: left;
+            border-bottom: 1px solid #e0e0e0;
+        }
+
+        th {
+            background-color: #ff80ab; /* Светло-розовый цвет заголовков таблицы */
+            color: white;
+        }
+
+        tr:hover {
+            background-color: #ffe0eb; /* Цвет при наведении на строку таблицы */
+        }
+    </style>
+</head>
+<body>
+<div th:replace="header4"></div>
+
+<h1>Все пользователи</h1>
+<a href="/registration" class="btn btn-success">Новый пользователь</a>
+<div class="container">
+    <table class="table">
+        <tr>
+            <th>Логин</th>
+            <th>Роли</th>
+            <th>Действие</th>
+        </tr>
+        <tr th:each="element_user : ${user_list}">
+            <td th:text="${element_user.username}"></td>
+            <td>
+                <div th:each="role : ${element_user.roles}">
+                    <p th:text="${role}"></p>
+                </div>
+            </td>
+            <td>
+                <a class="btn btn-primary" th:href="'/admin/users/' + ${element_user.idUser}">Подробнее...</a>
+            </td>
+        </tr>
+    </table>
+</div>
+</body>
+</html>

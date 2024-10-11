@@ -1,0 +1,216 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Список доставок</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f9f1f2;
+            color: #333;
+            margin: 0;
+            padding: 20px;
+        }
+
+        h1, h2 {
+            text-align: center;
+            color: #d5006d;
+        }
+
+        .container {
+            max-width: 600px;
+            margin: auto;
+            padding: 20px;
+            background-color: #fff;
+            border-radius: 8px;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+        }
+
+        form {
+            margin-bottom: 20px;
+        }
+
+        input[type="text"], select {
+            width: calc(100% - 22px);
+            padding: 10px;
+            border: 1px solid #d5006d;
+            border-radius: 5px;
+            box-sizing: border-box; /* Чтобы отступы не увеличивали ширину */
+            margin-bottom: 10px;
+        }
+
+        button {
+            padding: 10px 15px;
+            border: none;
+            border-radius: 5px;
+            color: white;
+            cursor: pointer;
+        }
+
+        button[type="submit"] {
+            background-color: #ff4081; /* Розовая кнопка для добавления и обновления */
+        }
+
+        button[type="submit"]:hover {
+            background-color: #e91e63; /* Темнее при наведении */
+        }
+
+        .error {
+            color: #d50000; /* Красный цвет для ошибок */
+            font-size: 0.9em;
+        }
+
+        ul {
+            list-style-type: none;
+            padding: 0;
+        }
+
+        li {
+            background-color: #fff;
+            margin-bottom: 10px;
+            padding: 10px;
+            border-radius: 5px;
+            box-shadow: 0 1px 5px rgba(0, 0, 0, 0.1);
+        }
+
+        form.inline {
+            display: inline-block;
+            margin-left: 10px;
+        }
+    </style>
+</head>
+<body>
+<div th:replace="header5"></div>
+<div class="container">
+    <h1>Список доставок</h1>
+    <form action="/deliveries/add" method="post" th:object="${delivery}">
+        <input type="text" name="info" placeholder="Дополнительная информация" th:field="*{info}" required>
+        <div th:if="${#fields.hasErrors('info')}" class="error" th:errors="*{info}">Дополнительная информация не более 255-ти символов</div>
+
+        <select name="courier" th:field="*{courier}" required>
+            <option value="" disabled selected>Выберите курьера</option>
+            <option th:each="courier : ${couriers}"
+                    th:value="${courier.id}"
+                    th:text="${courier.firstName} + ' ' + ${courier.lastName}">
+            </option>
+        </select>
+        <div th:if="${#fields.hasErrors('courier')}" class="error" th:errors="*{courier}">Выберите курьера</div>
+
+        <select name="order" th:field="*{order}" required>
+            <option value="" disabled selected>Выберите заказ</option>
+            <option th:each="order : ${orders}"
+                    th:value="${order.id}"
+                    th:text="${order.name}">
+            </option>
+        </select>
+        <div th:if="${#fields.hasErrors('order')}" class="error" th:errors="*{order}">Выберите заказ</div>
+
+        <button type="submit">Добавить доставку</button>
+    </form>
+
+    <h2>Все доставки:</h2>
+    <ul>
+        <th:block th:each="delivery : ${deliveries}">
+            <li>
+                <span th:text="${delivery.info}"></span> -
+                <span th:text="${delivery.courier.firstName} + ' ' + ${delivery.courier.lastName}"></span> -
+                <span th:text="${delivery.order.name}"></span>
+                <form action="/deliveries/update" method="post" class="inline">
+                    <input type="hidden" name="id" th:value="${delivery.id}">
+                    <input type="text" name="info" th:value="${delivery.info}" placeholder="Дополнительная информация" required>
+
+                    <!--<select name="courier" th:value="${delivery.courier.id}" required>
+                        <option th:each="courier : ${couriers}"
+                                th:value="${courier.id}"
+                                th:text="${courier.firstName} + ' ' + ${courier.lastName}">
+                        </option>
+                    </select>
+                    <select name="order" th:value="${delivery.order.id}" required>
+                        <option th:each="order : ${orders}"
+                                th:value="${order.id}"
+                                th:text="${order.name}">
+                        </option>
+                    </select>-->
+                    <button type="submit">Обновить</button>
+                </form>
+                <form action="/deliveries/delete" method="post" class="inline">
+                    <input type="hidden" name="id" th:value="${delivery.id}">
+                    <button type="submit">Удалить</button>
+                </form>
+            </li>
+        </th:block>
+    </ul>
+</div>
+</body>
+</html>
+
+
+
+
+                <!--
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Список доставок</title>
+</head>
+<body>
+<h1>Список доставок</h1>
+
+<form action="/deliveries/add" method="post" th:object="${delivery}">
+    <input type="text" name="info" placeholder="Дополнительная информация" th:field="*{info}" required>
+    <div th:if="${#fields.hasErrors('info')}" th:errors="*{info}">Дополнительная информация не более 255-ти символов</div>
+
+    <select name="courier" th:field="*{courier}" required>
+        <option th:each="courier : ${couriers}"
+                th:value="${courier.id}"
+                th:text="${courier.firstName} + ' ' + ${courier.lastName}">
+        </option>
+    </select>
+    <div th:if="${#fields.hasErrors('courier')}" th:errors="*{courier}">Выберите курьера</div>
+
+    <select name="order" th:field="*{order}" required>
+        <option th:each="order : ${orders}"
+                th:value="${order.id}"
+                th:text="${order.name}">
+        </option>
+    </select>
+    <div th:if="${#fields.hasErrors('order')}" th:errors="*{order}">Выберите заказ</div>
+
+    <button type="submit" formmethod="post">Добавить доставку</button>
+</form>
+
+<h2>Все доставки:</h2>
+<ul>
+    <th:block th:each="delivery : ${deliveries}">
+        <li>
+            <span th:text="${delivery.info}"></span> -
+            <span th:text="${delivery.courier.firstName} + ' ' + ${delivery.courier.lastName}"></span> -
+            <span th:text="${delivery.order.id}"></span>
+            <form action="/deliveries/update" method="post" style="display:inline;">
+                <input type="hidden" name="id" th:value="${delivery.id}">
+                <input type="text" name="info" th:value="${delivery.info}" placeholder="Дополнительная информация" required>
+                <select name="courier" th:value="${delivery.courier.id}" required>
+                    <option th:each="courier : ${couriers}"
+                            th:value="${courier.id}"
+                            th:text="${courier.firstName} + ' ' + ${courier.lastName}">
+                    </option>
+                </select>
+                <select name="order" th:value="${delivery.order.id}" required>
+                    <option th:each="order : ${orders}"
+                            th:value="${order.id}"
+                            th:text="${order.name}">
+                    </option>
+                </select>
+                <button type="submit" formmethod="post">Обновить</button>
+            </form>
+            <form action="/deliveries/delete" method="post" style="display:inline;">
+                <input type="hidden" name="id" th:value="${delivery.id}">
+                <button type="submit" formmethod="post">Удалить</button>
+            </form>
+        </li>
+    </th:block>
+</ul>
+</body>
+</html>
+-->

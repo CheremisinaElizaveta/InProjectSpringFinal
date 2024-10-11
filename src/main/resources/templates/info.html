@@ -1,0 +1,74 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Подробная информация о пользователе</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f9f1f2;
+            color: #333;
+
+        }
+
+        .container {
+            max-width: 600px;
+            margin: auto;
+            padding: 20px;
+            background-color: #fff;
+            border-radius: 8px;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+        }
+
+        h1 {
+            text-align: center;
+            color: #d5006d;
+        }
+
+        h2 {
+            color: #d5006d;
+        }
+
+        p {
+            font-size: 16px;
+            line-height: 1.5;
+        }
+
+        .btn {
+            display: inline-block;
+            padding: 10px 15px;
+            border: none;
+            border-radius: 5px;
+            text-decoration: none;
+            color: white;
+            cursor: pointer;
+            margin-top: 20px;
+        }
+
+        .btn-warning {
+            background-color: #ff9800; /* Оранжевая кнопка "Редактировать" */
+        }
+
+        .btn-success {
+            background-color: #ff4081; /* Розовая кнопка "Назад" */
+        }
+
+        .status {
+            margin-top: 15px;
+            font-weight: bold;
+        }
+    </style>
+</head>
+<body>
+<div th:replace="header4"></div>
+<div class="container">
+    <h1 th:text="'Пользователь: ' + ${user_object.username}"></h1>
+    <div class="roles-container">
+        <h2 th:text="'Роли: ' + ${user_object.roles}"></h2>
+        <p class="status" th:text="${user_object.active} == true ? 'Пользователь активен' : 'Пользователь заблокирован'"></p>
+    </div>
+    <a th:href="'/admin/users/' + ${user_object.idUser} + '/update'" class="btn btn-warning">Редактировать</a>
+    <a href="/admin/users" class="btn btn-success">Назад</a>
+</div>
+</body>
+</html>

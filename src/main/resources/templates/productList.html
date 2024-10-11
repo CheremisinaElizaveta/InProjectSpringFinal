@@ -1,0 +1,185 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Список продуктов</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f9f1f2;
+            color: #333;
+            margin: 0;
+            padding: 20px;
+        }
+
+        h1, h2 {
+            text-align: center;
+            color: #d5006d;
+        }
+
+        .container {
+            max-width: 600px;
+            margin: auto;
+            padding: 20px;
+            background-color: #fff;
+            border-radius: 8px;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+        }
+
+        form {
+            margin-bottom: 20px;
+        }
+
+        input[type="text"], select {
+            width: calc(100% - 22px);
+            padding: 10px;
+            border: 1px solid #d5006d;
+            border-radius: 5px;
+            box-sizing: border-box; /* Чтобы отступы не увеличивали ширину */
+            margin-bottom: 10px;
+        }
+
+        button {
+            padding: 10px 15px;
+            border: none;
+            border-radius: 5px;
+            color: white;
+            cursor: pointer;
+        }
+
+        button[type="submit"] {
+            background-color: #ff4081; /* Розовая кнопка для добавления и обновления */
+        }
+
+        button[type="submit"]:hover {
+            background-color: #e91e63; /* Темнее при наведении */
+        }
+
+        .error {
+            color: #d50000; /* Красный цвет для ошибок */
+            font-size: 0.9em;
+        }
+
+        ul {
+            list-style-type: none;
+            padding: 0;
+        }
+
+        li {
+            background-color: #fff;
+            margin-bottom: 10px;
+            padding: 10px;
+            border-radius: 5px;
+            box-shadow: 0 1px 5px rgba(0, 0, 0, 0.1);
+        }
+
+        form.inline {
+            display: inline-block;
+            margin-left: 10px;
+        }
+    </style>
+</head>
+<body>
+<div th:replace="header5"></div>
+<div class="container">
+    <h1>Список продуктов</h1>
+
+    <form action="/products/add" method="post" th:object="${product}">
+        <input type="text" name="name" placeholder="Название продукта" th:field="*{name}" required>
+        <div th:if="${#fields.hasErrors('name')}" class="error" th:errors="*{name}">Название продукта не менее трех символов</div>
+
+        <select name="category" th:field="*{category}" required>
+            <option value="" disabled selected>Выберите категорию</option>
+            <option th:each="category : ${categories}"
+                    th:value="${category.id}"
+                    th:text="${category.name}">
+            </option>
+        </select>
+        <div th:if="${#fields.hasErrors('category')}" class="error" th:errors="*{category}">Выберите категорию</div>
+
+        <button type="submit">Добавить продукт</button>
+    </form>
+
+    <h2>Все продукты:</h2>
+    <ul>
+        <th:block th:each="product : ${products}">
+            <li>
+                <span th:text="${product.name + ' - ' + product.category.name}"></span>
+                <form action="/products/update" method="post" class="inline">
+                    <input type="hidden" name="id" th:value="${product.id}">
+                    <input type="text" name="name" th:value="${product.name}" placeholder="Название продукта" required>
+
+                    <select name="category" required>
+                        <option th:value="${product.category.id}" th:text="${product.category.name}"></option>
+                        <option th:each="category : ${categories}"
+                                th:value="${category.id}"
+                                th:text="${category.name}">
+                        </option>
+                    </select>
+                    <button type="submit">Обновить</button>
+                </form>
+                <form action="/products/delete" method="post" class="inline">
+                    <input type="hidden" name="id" th:value="${product.id}">
+                    <button type="submit">Удалить</button>
+                </form>
+            </li>
+        </th:block>
+    </ul>
+</div>
+</body>
+</html>
+
+
+
+
+                    <!--
+                    <!DOCTYPE html>
+                    <html lang="en" xmlns:th="http://www.thymeleaf.org">
+                    <head>
+                        <meta charset="UTF-8">
+                        <title>Список продуктов</title>
+                    </head>
+                    <body>
+                    <h1>Список продуктов</h1>
+
+                    <form action="/products/add" method="post" th:object="${product}">
+                        <input type="text" name="name" placeholder="Название продукта" th:field="*{name}" required>
+                        <div th:if="${#fields.hasErrors('name')}" th:errors="*{name}">Название продукта не менее трех символов</div>
+
+                        <select name="category" th:field="*{category}" required>
+                            <option th:each="category : ${categories}"
+                                    th:value="${category.id}"
+                                    th:text="${category.name}">
+                            </option>
+                        </select>
+                        <div th:if="${#fields.hasErrors('category')}" th:errors="*{category}">Выберите категорию</div>
+
+                        <button type="submit" formmethod="post">Добавить продукт</button>
+                    </form>
+
+                    <h2>Все продукты:</h2>
+                    <ul>
+                        <th:block th:each="product : ${products}">
+                            <li>
+                                <span th:text="${product.name + ' - ' + product.category.name}"></span>
+                                <form action="/products/update" method="post" style="display:inline;">
+                                    <input type="hidden" name="id" th:value="${product.id}">
+                                    <input type="text" name="name" th:value="${product.name}" placeholder="Название продукта" required>
+                                    <select name="category" th:value="${product.category.id}" required>
+                                        <option th:each="category : ${categories}"
+                                                th:value="${category.id}"
+                                                th:text="${category.name}">
+                                        </option>
+                                    </select>
+                                    <button type="submit" formmethod="post">Обновить</button>
+                                </form>
+                                <form action="/products/delete" method="post" style="display:inline;">
+                                    <input type="hidden" name="id" th:value="${product.id}">
+                                    <button type="submit" formmethod="post">Удалить</button>
+                                </form>
+                            </li>
+                        </th:block>
+                    </ul>
+                    </body>
+                    </html>
+                    -->

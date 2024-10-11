@@ -1,0 +1,292 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Список заказов</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f9f1f2;
+            color: #333;
+            margin: 0;
+            padding: 20px;
+        }
+
+        h1, h2 {
+            text-align: center;
+            color: #d5006d;
+        }
+
+        .container {
+            max-width: 600px;
+            margin: auto;
+            padding: 20px;
+            background-color: #fff;
+            border-radius: 8px;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+        }
+
+        form {
+            margin-bottom: 20px;
+        }
+
+        input[type="text"],
+        input[type="number"],
+        input[type="date"],
+        select {
+            width: calc(100% - 22px);
+            padding: 10px;
+            border: 1px solid #d5006d;
+            border-radius: 5px;
+            box-sizing: border-box;
+            margin-bottom: 10px;
+        }
+
+        button {
+            padding: 10px 15px;
+            border: none;
+            border-radius: 5px;
+            color: white;
+            cursor: pointer;
+        }
+
+        button[type="submit"] {
+            background-color: #ff4081;
+        }
+
+        button[type="submit"]:hover {
+            background-color: #e91e63;
+        }
+
+        ul {
+            list-style-type: none;
+            padding: 0;
+        }
+
+        li {
+            background-color: #fff;
+            margin-bottom: 10px;
+            padding: 10px;
+            border-radius: 5px;
+            box-shadow: 0 1px 5px rgba(0, 0, 0, 0.1);
+        }
+
+        .error-message {
+            color: red;
+            margin-top: -10px;
+            margin-bottom: 10px;
+        }
+
+        form.inline {
+            display: inline-block;
+            margin-left: 10px;
+        }
+    </style>
+<body>
+
+<div th:replace="header"></div>
+<h1>Список заказов</h1>
+
+
+<div class="container">
+    <form action="/orders/add" method="post" th:object="${order}">
+        <input type="text" name="date" th:field="*{date}" required>
+        <div th:if="${#fields.hasErrors('date')}" th:errors="*{date}" class="error-message"></div>
+
+        <input type="text" name="name" th:field="*{name}" required>
+        <div th:if="${#fields.hasErrors('name')}" th:errors="*{name}" class="error-message"></div>
+
+        <div>
+            <h3>Адрес:</h3>
+            <input type="number" name="house" th:field="*{address.house}" required>
+            <div th:if="${#fields.hasErrors('address.house')}" th:errors="*{address.house}" class="error-message"></div>
+
+            <input type="text" name="street" th:field="*{address.street}" required>
+            <div th:if="${#fields.hasErrors('address.street')}" th:errors="*{address.street}" class="error-message"></div>
+
+            <input type="text" name="city" th:field="*{address.city}" required>
+            <div th:if="${#fields.hasErrors('address.city')}" th:errors="*{address.city}" class="error-message"></div>
+
+            <input type="text" name="state" th:field="*{address.state}" required>
+            <div th:if="${#fields.hasErrors('address.state')}" th:errors="*{address.state}" class="error-message"></div>
+
+            <input type="text" name="postalCode" th:field="*{address.postalCode}" required>
+            <div th:if="${#fields.hasErrors('address.postalCode')}" th:errors="*{address.postalCode}" class="error-message"></div>
+
+            <input type="text" name="country" th:field="*{address.country}" required>
+            <div th:if="${#fields.hasErrors('address.country')}" th:errors="*{address.country}" class="error-message"></div>
+        </div>
+
+        <select name="status" th:field="*{status}" required>
+            <option th:each="status : ${statuses}"
+                    th:value="${status.id}"
+                    th:text="${status.name}">
+            </option>
+        </select>
+        <div th:if="${#fields.hasErrors('status')}" th:errors="*{status}" class="error-message"></div>
+
+        <select name="payment" th:field="*{payment}" required>
+            <option th:each="payment : ${payments}"
+                    th:value="${payment.id}"
+                    th:text="${payment.name}">
+            </option>
+        </select>
+        <div th:if="${#fields.hasErrors('payment')}" th:errors="*{payment}" class="error-message"></div>
+
+        <select name="product" th:field="*{product}" required>
+            <option th:each="product : ${products}"
+                    th:value="${product.id}"
+                    th:text="${product.name}">
+            </option>
+        </select>
+        <div th:if="${#fields.hasErrors('product')}" th:errors="*{product}" class="error-message"></div>
+
+        <button type="submit" formmethod="post">Добавить заказ</button>
+    </form>
+</div>
+
+<h2>Все заказы:</h2>
+<ul>
+    <th:block th:each="order : ${orders}">
+        <li>
+            <span th:text="${order.date} + ' - ' + ${order.name} + ' - ' + ${order.status.name} + ' - ' + ${order.payment.name} + ' - ' + ${order.product.name}"></span>
+            <form action="/orders/update" method="post" style="display:inline;">
+                <input type="hidden" name="id" th:value="${order.id}">
+                <input type="text" name="name" th:value="${order.date}" placeholder="Дата заказа" required>
+                <input type="text" name="name" th:value="${order.name}" placeholder="Название заказа" required>
+
+                <!--<select name="status" th:value="${order.status.id}" required>
+                    <option th:each="status : ${statuses}"
+                            th:value="${status.id}"
+                            th:text="${status.name}">
+                    </option>
+                </select>
+                <select name="payment" th:value="${order.payment.id}" required>
+                    <option th:each="payment : ${payments}"
+                            th:value="${payment.id}"
+                            th:text="${payment.name}">
+                    </option>
+                </select>
+                <select name="product" th:value="${order.product.id}" required>
+                    <option th:each="product : ${products}"
+                            th:value="${product.id}"
+                            th:text="${product.name}">
+                    </option>
+                </select>-->
+                <button type="submit" formmethod="post">Обновить</button>
+            </form>
+            <form action="/orders/delete" method="post" style="display:inline;">
+                <input type="hidden" name="id" th:value="${order.id}">
+                <button type="submit" formmethod="post">Удалить</button>
+            </form>
+        </li>
+    </th:block>
+</ul>
+</body>
+</html>
+
+
+
+            <!--
+            <!DOCTYPE html>
+            <html lang="en" xmlns:th="http://www.thymeleaf.org">
+            <head>
+                <meta charset="UTF-8">
+                <title>Список заказов</title>
+            </head>
+            <body>
+            <h1>Список заказов</h1>
+
+            <form action="/orders/add" method="post" th:object="${order}">
+
+                <input type="text" name="country" th:field="*{date}" required>
+                &lt;!&ndash;<div th:if="${#fields.hasErrors('data')}" th:errors="*{data}">Дата обязательно</div>&ndash;&gt;
+
+                <input type="text" name="country" th:field="*{name}" required>
+                &lt;!&ndash;<div th:if="${#fields.hasErrors('data')}" th:errors="*{data}">Название обязательно</div>&ndash;&gt;
+                <div>
+                    <h3>Адрес:</h3>
+                    <input type="number" name="house" th:field="*{address.house}" required>
+                    <div th:if="${#fields.hasErrors('address.house')}" th:errors="*{address.house}">Номер дома обязателен</div>
+
+                    <input type="text" name="street" th:field="*{address.street}" required>
+                    <div th:if="${#fields.hasErrors('address.street')}" th:errors="*{address.street}">Название улицы обязательно</div>
+
+                    <input type="text" name="city" th:field="*{address.city}" required>
+                    <div th:if="${#fields.hasErrors('address.city')}" th:errors="*{address.city}">Название города обязательно</div>
+
+                    <input type="text" name="state" th:field="*{address.state}" required>
+                    <div th:if="${#fields.hasErrors('address.state')}" th:errors="*{address.state}">Название области обязательно</div>
+
+                    <input type="text" name="postalCode" th:field="*{address.postalCode}" required>
+                    <div th:if="${#fields.hasErrors('address.postalCode')}" th:errors="*{address.postalCode}">Почтовый индекс обязателен</div>
+
+                    <input type="text" name="country" th:field="*{address.country}" required>
+                    <div th:if="${#fields.hasErrors('address.country')}" th:errors="*{address.country}">Название страны обязательно</div>
+                </div>
+
+                <select name="status" th:field="*{status}" required>
+                    <option th:each="status : ${statuses}"
+                            th:value="${status.id}"
+                            th:text="${status.name}">
+                    </option>
+                </select>
+                <div th:if="${#fields.hasErrors('status')}" th:errors="*{status}">Выберите статус</div>
+
+                <select name="payment" th:field="*{payment}" required>
+                    <option th:each="payment : ${payments}"
+                            th:value="${payment.id}"
+                            th:text="${payment.name}">
+                    </option>
+                </select>
+                <div th:if="${#fields.hasErrors('payment')}" th:errors="*{payment}">Выберите способ оплаты</div>
+
+                <select name="product" th:field="*{product}" required>
+                    <option th:each="product : ${products}"
+                            th:value="${product.id}"
+                            th:text="${product.name}">
+                    </option>
+                </select>
+                <div th:if="${#fields.hasErrors('product')}" th:errors="*{product}">Выберите продукт</div>
+
+                <button type="submit" formmethod="post">Добавить заказ</button>
+            </form>
+
+            <h2>Все заказы:</h2>
+            <ul>
+                <th:block th:each="order : ${orders}">
+                    <li>
+                        <span th:text="${order.date} + ' - ' + ${order.name} + ' - ' + ${order.status.name} + ' - ' + ${order.payment.name} + ' - ' + ${order.product.name}"></span>
+                        <form action="/orders/update" method="post" style="display:inline;">
+                            <input type="hidden" name="id" th:value="${order.id}">
+
+                            <select name="status" th:value="${order.status.id}" required>
+                                <option th:each="status : ${statuses}"
+                                        th:value="${status.id}"
+                                        th:text="${status.name}">
+                                </option>
+                            </select>
+                            <select name="payment" th:value="${order.payment.id}" required>
+                                <option th:each="payment : ${payments}"
+                                        th:value="${payment.id}"
+                                        th:text="${payment.name}">
+                                </option>
+                            </select>
+                            <select name="product" th:value="${order.product.id}" required>
+                                <option th:each="product : ${products}"
+                                        th:value="${product.id}"
+                                        th:text="${product.name}">
+                                </option>
+                            </select>
+                            <button type="submit" formmethod="post">Обновить</button>
+                        </form>
+                        <form action="/orders/delete" method="post" style="display:inline;">
+                            <input type="hidden" name="id" th:value="${order.id}">
+                            <button type="submit" formmethod="post">Удалить</button>
+                        </form>
+                    </li>
+                </th:block>
+            </ul>
+            </body>
+            </html>
+            -->
